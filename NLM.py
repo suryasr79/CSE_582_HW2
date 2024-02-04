@@ -115,8 +115,9 @@ class NgramLM(nn.Module):
     def forward(self, inputs):
         embeds = self.embeddings(inputs).view((inputs.shape[0], -1))  # Assuming batch size 1
         # TODO create the final layer, and calculate the log probabilities of the classes
-        out = F.relu(self.linear1(embeds))
-        log_probs = F.log_softmax(self.linear2(out), dim=1)
+        hidden1 = F.relu(self.linear1(embeds))
+        hidden1_dropout = F.dropout(hidden1, p=0.5, training=self.training)
+        log_probs = F.relu(self.linear2(hidden1_dropout))
         return log_probs
 
 
