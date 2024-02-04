@@ -137,7 +137,9 @@ def output(model, file1, file2):
     with open(file2, 'w') as fw2:
         for word, id in vocab.items():
             # TODO Initialize some random embeddings and write to file2
-            embedding = np.random.rand(EMBEDDING_DIM)
+            input_size = CONTEXT_SIZE * EMBEDDING_DIM
+            scale = np.sqrt(2.0 / input_size)
+            embedding = np.random.randn(EMBEDDING_DIM) * scale
             embedding_str = ' '.join(map(str, embedding))
             fw2.write(f'{word} {embedding_str}\n')
 
