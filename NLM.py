@@ -115,8 +115,8 @@ class NgramLM(nn.Module):
     def forward(self, inputs):
         embeds = self.embeddings(inputs).view((inputs.shape[0], -1))  # Assuming batch size 1
         # TODO create the final layer, and calculate the log probabilities of the classes
-        out =
-        log_probs =
+        out = F.relu(self.linear1(embeds))
+        log_probs = F.log_softmax(self.linear2(out), dim=1)
         return log_probs
 
 
@@ -127,11 +127,18 @@ def output(model, file1, file2):
 
     with open(file1, 'w') as fw1:
         for word, id in vocab.items():
-    # TODO Use the model to convert words to embeddings and write to file1
+            # TODO Use the model to convert words to embeddings and write to file1
+            word_idx = torch.LongTensor([vocab[word]])
+            embedding = model.embeddings(word_idx).detach().numpy()[0]
+            embedding_str = ' '.join(map(str, embedding))
+            fw1.write(f'{word} {embedding_str}\n')
+
     with open(file2, 'w') as fw2:
         for word, id in vocab.items():
-    # TODO Initialize some random embeddings and write to file2
-
+            # TODO Initialize some random embeddings and write to file2
+            embedding = np.random.rand(EMBEDDING_DIM)
+            embedding_str = ' '.join(map(str, embedding))
+            fw2.write(f'{word} {embedding_str}\n')
 
 def training(trainfile):
     """
@@ -153,28 +160,34 @@ def training(trainfile):
     model.to(device)
     model.train()
     # TODO Choose your optimizer and loss function
-    optimizer =
-    loss_function =
+    optimizer = AdamW(model.parameters(), lr=0.001)
+    loss_function = nn.NLLLoss()
+
     for epoch in range(100):  # you can increase the epochs but only if you stay within the instructed time limits
         total_loss = 0
         print(epoch)
         for context, target in generator:
             # Step 1. Recall that torch *accumulates* gradients. Before passing in a
             # new instance, you need to zero out the gradients from the old instance
-            # TODO
+            optimizer.zero_grad()
+
             # Step 2. Run the forward pass, getting log probabilities over next words
-            # TODO
+            log_probs = model(context.to(device))
+
             # Step 3. Compute your loss function.
-            # TODO
+            loss = loss_function(log_probs, target.to(device))
+
             # Step 4. Do the backward pass and update the gradient
-            # TODO
+            loss.backward()
+            optimizer.step()
+
             # Get the Python number from a 1-element Tensor by calling tensor.item()
             total_loss += loss.item()
         losses.append(total_loss)
         print(total_loss)
     print(losses)  # The loss decreased every iteration over the training data!
     model = model.to('cpu')
-    output(model, outfile, './data/embedding_random_500.txt')
+    output(model, outfile, './data/random_embedding.txt')
 
 
 def parse_args():
