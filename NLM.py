@@ -35,7 +35,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 CONTEXT_SIZE = 2
 EMBEDDING_DIM = 50
-BATCH_SIZE = 512
+BATCH_SIZE = 1024
 
 trigrams = []
 vocab = {}
