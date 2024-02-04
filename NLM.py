@@ -162,7 +162,7 @@ def training(trainfile):
     model.train()
     # TODO Choose your optimizer and loss function
     optimizer = AdamW(model.parameters(), lr=0.001)
-    loss_function = nn.NLLLoss()
+    loss_function = nn.CrossEntropyLoss()
 
     for epoch in range(100):  # you can increase the epochs but only if you stay within the instructed time limits
         total_loss = 0
