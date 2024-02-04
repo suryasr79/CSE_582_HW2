@@ -1,4 +1,4 @@
-# CSE 582, Spr 2024 Assignment 2: Language Modeling with a Feed Forward Neural Network (FFNN)
+# Assignment 2: Language Modeling with a Feed Forward Neural Network (FFNN)
 
 ## Steps to Run on W135 Systems:
 
